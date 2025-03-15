@@ -1,116 +1,191 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Eye, Menu, X, Terminal, Shield, Database } from 'lucide-react';
+import { Menu, X, Search, Eye, UserCircle, LogOut } from 'lucide-react';
 import ASCIIHeader from './ASCIIHeader';
-
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Discover', href: '/discover' },
-  { name: 'View', href: '/view' },
-];
+import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    // Close mobile menu when route changes
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
-    <header 
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled ? "py-1 bg-background/80 backdrop-blur-md border-b border-primary/30" : "py-2"
-      )}
-    >
-      <div className="container mx-auto px-4 md:px-6">
-        {/* ASCII Art Logo */}
-        <ASCIIHeader />
-        
-        <div className="flex items-center justify-between mt-2">
-          {/* Small icon version for mobile */}
-          <Link 
-            to="/" 
-            className="flex md:hidden items-center space-x-2 transition-opacity duration-300 hover:opacity-80"
-          >
-            <Terminal className="size-5 text-primary cyber-glow" />
-            <span className="text-lg font-mono tracking-tight cyber-glow">OmniEye</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-primary/20">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <ASCIIHeader />
           </Link>
-
+          
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8 mx-auto">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  "text-sm font-mono transition-colors duration-300 flex items-center gap-2 px-3 py-1",
-                  location.pathname === item.href
-                    ? "text-primary cyber-glow cyber-border"
-                    : "text-muted-foreground hover:text-primary hover:cyber-glow"
-                )}
-              >
-                {item.name === 'Home' && <Database className="size-3.5" />}
-                {item.name === 'Discover' && <Eye className="size-3.5" />}
-                {item.name === 'View' && <Shield className="size-3.5" />}
-                <span data-text={item.name} className={location.pathname === item.href ? "glitch" : ""}>
-                  {item.name}
-                </span>
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link 
+              to="/" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                isActive('/') ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/discover" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary flex items-center",
+                isActive('/discover') ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              <Search className="mr-1 size-4" />
+              Discover
+            </Link>
+            <Link 
+              to="/view" 
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary flex items-center",
+                isActive('/view') ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              <Eye className="mr-1 size-4" />
+              Live View
+            </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden cyber-border p-1"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="size-5 text-primary" />
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-2">
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="text-sm font-mono px-3 py-1 rounded-full bg-primary/10 text-primary">
+                  <span className="hidden sm:inline">USER:</span> {user.name}
+                </div>
+                <button 
+                  onClick={signOut}
+                  className="p-2 rounded-full hover:bg-muted/10 text-muted-foreground hover:text-primary transition-colors"
+                  title="Sign out"
+                >
+                  <LogOut className="size-5" />
+                </button>
+              </div>
             ) : (
-              <Menu className="size-5 text-primary" />
+              <>
+                <Link 
+                  to="/sign-in" 
+                  className="px-4 py-1.5 rounded-md border border-input hover:bg-primary/10 hover:text-primary transition-colors text-sm"
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  to="/sign-up" 
+                  className="px-4 py-1.5 rounded-md bg-primary text-white hover:bg-primary/90 transition-colors text-sm"
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 rounded-md hover:bg-muted/10 text-muted-foreground"
+            onClick={toggleMenu}
+          >
+            {isMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
           </button>
         </div>
       </div>
-
+      
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-primary/30 animate-fade-in glass">
-          <div className="container mx-auto px-4 py-4">
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-border animate-scale-in">
+          <div className="container mx-auto px-4 py-3">
             <nav className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "text-base font-mono transition-colors py-2 flex items-center gap-2",
-                    location.pathname === item.href
-                      ? "text-primary cyber-glow"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {item.name === 'Home' && <Database className="size-4" />}
-                  {item.name === 'Discover' && <Eye className="size-4" />}
-                  {item.name === 'View' && <Shield className="size-4" />}
-                  {item.name}
-                </Link>
-              ))}
+              <Link 
+                to="/" 
+                className={cn(
+                  "flex items-center py-2 text-sm font-medium transition-colors hover:text-primary",
+                  isActive('/') ? "text-primary" : "text-muted-foreground"
+                )}
+                onClick={closeMenu}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/discover" 
+                className={cn(
+                  "flex items-center py-2 text-sm font-medium transition-colors hover:text-primary",
+                  isActive('/discover') ? "text-primary" : "text-muted-foreground"
+                )}
+                onClick={closeMenu}
+              >
+                <Search className="mr-2 size-4" />
+                Discover
+              </Link>
+              <Link 
+                to="/view" 
+                className={cn(
+                  "flex items-center py-2 text-sm font-medium transition-colors hover:text-primary",
+                  isActive('/view') ? "text-primary" : "text-muted-foreground"
+                )}
+                onClick={closeMenu}
+              >
+                <Eye className="mr-2 size-4" />
+                Live View
+              </Link>
+              
+              {/* Mobile Auth Links */}
+              <div className="pt-2 border-t border-border">
+                {user ? (
+                  <>
+                    <div className="flex items-center py-2 gap-2">
+                      <UserCircle className="size-5 text-primary" />
+                      <span className="text-sm font-medium">{user.name}</span>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        signOut();
+                        closeMenu();
+                      }}
+                      className="flex items-center py-2 w-full text-sm font-medium text-red-400 hover:text-red-300"
+                    >
+                      <LogOut className="mr-2 size-4" />
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/sign-in"
+                      className="flex items-center py-2 text-sm font-medium transition-colors hover:text-primary"
+                      onClick={closeMenu}
+                    >
+                      <UserCircle className="mr-2 size-4" />
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/sign-up"
+                      className="flex items-center py-2 text-sm font-medium text-primary"
+                      onClick={closeMenu}
+                    >
+                      <UserCircle className="mr-2 size-4" />
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </nav>
           </div>
         </div>

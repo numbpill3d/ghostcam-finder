@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import StatusBadge from './StatusBadge';
-import { Eye, EyeOff, Maximize, MoreVertical } from 'lucide-react';
+import { Eye, EyeOff, Maximize, MoreVertical, Bookmark, BookmarkCheck } from 'lucide-react';
 
 interface CameraFeedProps {
   id: string;
@@ -12,7 +12,10 @@ interface CameraFeedProps {
   location?: string;
   imageUrl?: string;
   onSelect?: () => void;
+  onSave?: () => void;
   isSelected?: boolean;
+  isAuthenticated?: boolean;
+  isSaved?: boolean;
   className?: string;
 }
 
@@ -24,11 +27,15 @@ const CameraFeed = ({
   location,
   imageUrl,
   onSelect,
+  onSave,
   isSelected,
+  isAuthenticated = false,
+  isSaved = false,
   className
 }: CameraFeedProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
+  const [saved, setSaved] = useState(isSaved);
 
   useEffect(() => {
     // Simulate loading
@@ -41,6 +48,12 @@ const CameraFeed = ({
 
   const handleSelect = () => {
     onSelect?.();
+  };
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSaved(!saved);
+    onSave?.();
   };
 
   return (
@@ -103,6 +116,18 @@ const CameraFeed = ({
       {/* Hover Controls */}
       {isHovered && status === 'online' && (
         <div className="absolute top-2 right-2 flex items-center space-x-1 animate-fade-in">
+          {isAuthenticated && (
+            <button 
+              className={cn(
+                "size-8 flex items-center justify-center rounded-full text-white transition-colors",
+                saved ? "bg-primary/80 hover:bg-primary/90" : "bg-black/60 hover:bg-black/80"
+              )}
+              onClick={handleSave}
+              title={saved ? "Unsave feed" : "Save feed"}
+            >
+              {saved ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
+            </button>
+          )}
           <button className="size-8 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
             <Maximize className="size-4" />
           </button>

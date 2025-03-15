@@ -1,6 +1,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
+import { MapPin, Maximize, TerminalSquare } from 'lucide-react';
 
 interface MapPoint {
   id: string;
@@ -20,6 +22,10 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [hoveredPoint, setHoveredPoint] = useState<string | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<string | null>(null);
+  
+  // Count active cameras
+  const activeCamerasCount = points.filter(p => p.type === 'active').length;
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -36,10 +42,20 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
     updateDimensions();
     window.addEventListener('resize', updateDimensions);
 
+    // Terminal typing effect for coordinates
+    const interval = setInterval(() => {
+      const randomPoint = points[Math.floor(Math.random() * points.length)];
+      if (randomPoint) {
+        setSelectedPoint(randomPoint.id);
+        setTimeout(() => setSelectedPoint(null), 3000);
+      }
+    }, 5000);
+
     return () => {
       window.removeEventListener('resize', updateDimensions);
+      clearInterval(interval);
     };
-  }, []);
+  }, [points]);
 
   // Convert lat/long to x/y coordinates
   const getPointCoordinates = (latitude: number, longitude: number) => {
@@ -48,6 +64,22 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
     return { x, y };
   };
 
+  // Get random point data to display
+  const getSelectedPointData = () => {
+    if (!selectedPoint) return null;
+    const point = points.find(p => p.id === selectedPoint);
+    if (!point) return null;
+    return {
+      id: point.id,
+      name: point.name,
+      lat: point.latitude.toFixed(4),
+      lng: point.longitude.toFixed(4),
+      status: point.type === 'active' ? 'ONLINE' : 'OFFLINE'
+    };
+  };
+
+  const selectedPointData = getSelectedPointData();
+
   return (
     <div 
       ref={mapRef}
@@ -55,9 +87,19 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
     >
       {/* World Map Background */}
       <div className="absolute inset-0 bg-secondary/30 opacity-20">
-        {/* Map SVG would go here in a real implementation */}
-        <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAyNCAxMDI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9ImN1cnJlbnRDb2xvciIgZD0iTTAgMGgxMDI0djEwMjRIMHoiLz48L3N2Zz4=')] opacity-10" />
+        {/* Map Grid Lines */}
+        <div className="absolute inset-0 grid grid-cols-12 grid-rows-6 opacity-30">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={`col-${i}`} className="border-r border-primary/30 h-full" />
+          ))}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={`row-${i}`} className="border-b border-primary/30 w-full" />
+          ))}
+        </div>
       </div>
+
+      {/* Cyber Grid Overlay */}
+      <div className="absolute inset-0 cyber-grid opacity-10"></div>
 
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card/80"></div>
@@ -66,6 +108,7 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
       {dimensions.width > 0 && points.map((point) => {
         const { x, y } = getPointCoordinates(point.latitude, point.longitude);
         const isHovered = hoveredPoint === point.id;
+        const isSelected = selectedPoint === point.id;
         
         return (
           <div 
@@ -79,7 +122,7 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
             <div 
               className={cn(
                 "transition-all duration-300 cursor-pointer",
-                isHovered ? "scale-150" : "scale-100"
+                (isHovered || isSelected) ? "scale-150" : "scale-100"
               )}
             >
               <div 
@@ -90,21 +133,71 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
               />
               <div 
                 className={cn(
-                  "absolute size-4 -inset-1 rounded-full animate-pulse-slow",
-                  point.type === 'active' ? "bg-primary/30" : "bg-muted-foreground/20"
+                  "absolute size-4 -inset-1 rounded-full",
+                  point.type === 'active' ? "bg-primary/30 animate-pulse-slow" : "bg-muted-foreground/20"
                 )}
               />
+              {isSelected && (
+                <div className="absolute size-8 -inset-3 rounded-full border border-primary/50 animate-ping-slow"></div>
+              )}
             </div>
             
             {/* Tooltip */}
             {isHovered && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-popover shadow-lg rounded text-xs font-medium z-20 whitespace-nowrap">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-black/80 border border-primary/30 shadow-lg rounded text-xs font-mono z-20 whitespace-nowrap">
                 {point.name}
               </div>
             )}
           </div>
         );
       })}
+
+      {/* Stats Panel */}
+      <div className="absolute top-3 left-3 max-w-[250px] bg-black/80 backdrop-blur-sm border border-primary/30 rounded p-3 text-xs font-mono">
+        <div className="flex items-center gap-2 text-primary mb-2">
+          <TerminalSquare className="size-4" />
+          <span className="font-bold">SYSTEM.STATUS</span>
+        </div>
+        <div className="grid grid-cols-2 gap-1 text-muted-foreground">
+          <span>TOTAL NODES:</span>
+          <span className="text-primary">{points.length}</span>
+          <span>ACTIVE FEEDS:</span>
+          <span className="text-primary">{activeCamerasCount}</span>
+          <span>SCAN STATUS:</span>
+          <span className="text-green-400">LIVE</span>
+        </div>
+      </div>
+
+      {/* Selected Point Data */}
+      {selectedPointData && (
+        <div className="absolute bottom-3 right-3 max-w-[250px] bg-black/80 backdrop-blur-sm border border-primary/30 rounded p-3 text-xs font-mono animate-fade-in">
+          <div className="flex items-center gap-2 text-primary mb-2">
+            <MapPin className="size-4" />
+            <span className="font-bold terminal-text">NODE.{selectedPointData.id}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1 text-muted-foreground">
+            <span>NAME:</span>
+            <span className="text-primary terminal-text">{selectedPointData.name}</span>
+            <span>LAT:</span>
+            <span className="text-primary">{selectedPointData.lat}</span>
+            <span>LONG:</span>
+            <span className="text-primary">{selectedPointData.lng}</span>
+            <span>STATUS:</span>
+            <span className={selectedPointData.status === 'ONLINE' ? 'text-green-400' : 'text-red-400'}>
+              {selectedPointData.status}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Call to Action */}
+      <Link
+        to="/discover"
+        className="absolute bottom-3 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-primary/90 hover:bg-primary text-white font-mono rounded flex items-center gap-2 border border-primary/30 shadow-glow"
+      >
+        <Maximize className="size-4" />
+        DISCOVER NOW
+      </Link>
 
       {/* Glow Effects */}
       <div className="absolute top-1/4 left-1/4 size-40 bg-primary/5 rounded-full blur-[80px]" />

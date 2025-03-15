@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import SearchInput from '@/components/SearchInput';
 import LocationFilter from '@/components/LocationFilter';
 import CameraFeed from '@/components/CameraFeed';
 import { mockCameras, mockLocations, getSearchResults, getFilteredByLocation } from '@/utils/mockData';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Location {
   id: string;
@@ -15,17 +16,30 @@ interface Location {
 
 const Discover = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  
+  // Load user's preferred location if logged in
+  useEffect(() => {
+    if (user?.preferredLocation) {
+      const userLocation = mockLocations.find(loc => loc.id === user.preferredLocation);
+      if (userLocation) {
+        setSelectedLocation(userLocation);
+      }
+    }
+  }, [user]);
   
   // First apply location filter, then search filter
   const locationFiltered = getFilteredByLocation(selectedLocation?.id || null);
   const searchFiltered = getSearchResults(searchQuery);
   
   // Find the intersection of the two filtered arrays
-  const cameras = locationFiltered.filter(camera => 
-    searchFiltered.some(c => c.id === camera.id)
-  );
+  // IMPORTANT: Only show ONLINE cameras
+  const cameras = locationFiltered
+    .filter(camera => 
+      searchFiltered.some(c => c.id === camera.id) && camera.status === 'online'
+    );
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -33,10 +47,35 @@ const Discover = () => {
 
   const handleLocationSelect = (location: Location | null) => {
     setSelectedLocation(location);
+    // Save user's preferred location if logged in
+    if (user && location) {
+      saveUserPreference('preferredLocation', location.id);
+    }
   };
 
   const handleCameraSelect = (cameraId: string) => {
     navigate(`/view?id=${cameraId}`);
+    // Save to user's recent views if logged in
+    if (user) {
+      saveUserPreference('recentView', cameraId);
+    }
+  };
+
+  const saveUserPreference = (key: string, value: string) => {
+    // In a real app, this would be an API call to update user preferences
+    console.log(`Saving ${key}: ${value} for user ${user?.id}`);
+    // This would typically be implemented with the backend
+  };
+
+  const handleSaveFeed = (cameraId: string) => {
+    if (!user) {
+      navigate('/sign-in');
+      return;
+    }
+    
+    // In a real app, this would be an API call to save the feed
+    console.log(`Saving feed ${cameraId} for user ${user.id}`);
+    // This would typically update the UI to show it's saved
   };
 
   return (
@@ -59,6 +98,7 @@ const Discover = () => {
             locations={mockLocations} 
             onLocationSelect={handleLocationSelect}
             className="md:flex-[1]" 
+            selectedLocation={selectedLocation}
           />
         </div>
 
@@ -90,12 +130,14 @@ const Discover = () => {
                 location={`${camera.location.city}, ${camera.location.country}`}
                 imageUrl={camera.imageUrl}
                 onSelect={() => handleCameraSelect(camera.id)}
+                onSave={() => handleSaveFeed(camera.id)}
+                isAuthenticated={!!user}
               />
             ))}
           </div>
         ) : (
           <div className="py-16 text-center">
-            <p className="text-lg font-medium">No cameras found</p>
+            <p className="text-lg font-medium">No active cameras found</p>
             <p className="text-muted-foreground mt-2">Try adjusting your search or filters</p>
           </div>
         )}
