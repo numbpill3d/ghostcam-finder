@@ -21,7 +21,7 @@
     --secondary-foreground: 220 33% 9%;
 
     --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
+    --muted-foreground: 220 28% 36%; /* Darker for better contrast */
 
     --accent: 220 14.3% 95.9%;
     --accent-foreground: 220 33% 9%;
@@ -36,7 +36,7 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-foreground: 240 25% 35%; /* Improved contrast */
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
@@ -55,33 +55,33 @@
     --popover: 220 33% 8%;
     --popover-foreground: 220 33% 98%;
 
-    --primary: 210 100% 50%;
+    --primary: 180 100% 60%; /* Cyberpunk cyan */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 220 14.3% 15.9%;
     --secondary-foreground: 220 33% 98%;
 
     --muted: 220 14.3% 15.9%;
-    --muted-foreground: 220 8.9% 60.1%;
+    --muted-foreground: 220 18% 70%; /* Brighter for better readability */
 
-    --accent: 220 14.3% 15.9%;
+    --accent: 300 80% 50%; /* Cyberpunk magenta accent */
     --accent-foreground: 220 33% 98%;
 
     --destructive: 0 74.2% 50.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 13% 18%;
-    --input: 220 13% 18%;
-    --ring: 210 100% 50%;
+    --border: 220 23% 28%; /* More visible borders */
+    --input: 220 23% 28%;
+    --ring: 180 100% 60%;
 
     --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-foreground: 240 14% 85%; /* Improved contrast */
+    --sidebar-primary: 180 100% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent-foreground: 240 14% 85%;
+    --sidebar-border: 240 3.7% 25%; /* More visible borders */
+    --sidebar-ring: 180 100% 60%;
   }
 }
 
@@ -91,7 +91,7 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased dark;
     font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1, "ss02" 1, "cv01" 1, "cv02" 1, "cv03" 1;
   }
 
@@ -100,7 +100,7 @@
   }
 
   .glass {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-glass;
+    @apply bg-black/30 backdrop-blur-md border border-white/10 shadow-glass;
   }
 
   .glass-hover {
@@ -111,6 +111,143 @@
     @apply opacity-0 animate-fade-in;
     animation-fill-mode: forwards;
     animation-delay: calc(var(--delay, 0) * 100ms);
+  }
+  
+  /* Cyber aesthetic additions */
+  .cyber-border {
+    @apply border border-primary/80 shadow-[0_0_10px_rgba(0,255,255,0.5)] relative;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
+  }
+  
+  .cyber-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  
+  .terminal-text {
+    font-family: 'Courier New', monospace;
+  }
+  
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .scanline::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 255, 255, 0.3);
+    opacity: 0.6;
+    animation: scanline 3s linear infinite;
+  }
+  
+  @keyframes scanline {
+    0% {
+      top: -5%;
+    }
+    100% {
+      top: 105%;
+    }
+  }
+  
+  .glitch {
+    position: relative;
+  }
+  
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    clip: rect(0, 0, 0, 0);
+  }
+  
+  .glitch::before {
+    left: 2px;
+    text-shadow: -1px 0 rgba(255, 0, 255, 0.7);
+    animation: glitch-animation 3s infinite linear alternate-reverse;
+  }
+  
+  .glitch::after {
+    left: -2px;
+    text-shadow: 1px 0 rgba(0, 255, 255, 0.7);
+    animation: glitch-animation 2s infinite linear alternate-reverse;
+  }
+  
+  @keyframes glitch-animation {
+    0% {
+      clip: rect(44px, 9999px, 56px, 0);
+    }
+    5% {
+      clip: rect(19px, 9999px, 76px, 0);
+    }
+    10% {
+      clip: rect(58px, 9999px, 93px, 0);
+    }
+    15% {
+      clip: rect(10px, 9999px, 14px, 0);
+    }
+    20% {
+      clip: rect(14px, 9999px, 49px, 0);
+    }
+    25% {
+      clip: rect(46px, 9999px, 24px, 0);
+    }
+    30% {
+      clip: rect(12px, 9999px, 23px, 0);
+    }
+    35% {
+      clip: rect(63px, 9999px, 94px, 0);
+    }
+    40% {
+      clip: rect(0px, 9999px, 22px, 0);
+    }
+    45% {
+      clip: rect(15px, 9999px, 66px, 0);
+    }
+    50% {
+      clip: rect(33px, 9999px, 26px, 0);
+    }
+    55% {
+      clip: rect(4px, 9999px, 50px, 0);
+    }
+    60% {
+      clip: rect(25px, 9999px, 59px, 0);
+    }
+    65% {
+      clip: rect(10px, 9999px, 91px, 0);
+    }
+    70% {
+      clip: rect(86px, 9999px, 92px, 0);
+    }
+    75% {
+      clip: rect(20px, 9999px, 49px, 0);
+    }
+    80% {
+      clip: rect(34px, 9999px, 51px, 0);
+    }
+    85% {
+      clip: rect(67px, 9999px, 79px, 0);
+    }
+    90% {
+      clip: rect(0px, 9999px, 94px, 0);
+    }
+    95% {
+      clip: rect(52px, 9999px, 22px, 0);
+    }
+    100% {
+      clip: rect(78px, 9999px, 30px, 0);
+    }
+  }
+  
+  .retro-grid {
+    background-image: linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }
 
@@ -138,5 +275,21 @@
   .mask-fade-out-b {
     -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  }
+  
+  .matrix-rain {
+    position: relative;
+  }
+  
+  .matrix-rain:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,10,20,0.8) 100%);
+    z-index: 2;
   }
 }
