@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MapPin, ChevronDown, Check } from 'lucide-react';
+import { MapPin, ChevronDown, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Location {
