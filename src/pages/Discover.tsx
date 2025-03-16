@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import SearchInput from '@/components/SearchInput';
 import LocationFilter from '@/components/LocationFilter';
 import CameraFeed from '@/components/CameraFeed';
+import IoTCameraConnect from '@/components/IoTCameraConnect';
 import { mockCameras, mockLocations, getSearchResults, getFilteredByLocation } from '@/utils/mockData';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -102,45 +103,66 @@ const Discover = () => {
           />
         </div>
 
-        {/* Results Count */}
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-sm text-muted-foreground">
-            {cameras.length} {cameras.length === 1 ? 'camera' : 'cameras'} found
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Sort by:</span>
-            <select className="text-sm border border-input rounded bg-background px-2 py-1">
-              <option>Newest</option>
-              <option>Status</option>
-              <option>Location</option>
-            </select>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+          <div className="lg:col-span-3">
+            {/* Results Count */}
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-sm text-muted-foreground">
+                {cameras.length} {cameras.length === 1 ? 'camera' : 'cameras'} found
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Sort by:</span>
+                <select className="text-sm border border-input rounded bg-background px-2 py-1">
+                  <option>Newest</option>
+                  <option>Status</option>
+                  <option>Location</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Camera Grid */}
+            {cameras.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cameras.map((camera) => (
+                  <CameraFeed
+                    key={camera.id}
+                    id={camera.id}
+                    name={camera.name}
+                    status={camera.status}
+                    securityStatus={camera.securityStatus}
+                    location={`${camera.location.city}, ${camera.location.country}`}
+                    imageUrl={camera.imageUrl}
+                    onSelect={() => handleCameraSelect(camera.id)}
+                    onSave={() => handleSaveFeed(camera.id)}
+                    isAuthenticated={!!user}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="py-16 text-center">
+                <p className="text-lg font-medium">No active cameras found</p>
+                <p className="text-muted-foreground mt-2">Try adjusting your search or filters</p>
+              </div>
+            )}
+          </div>
+          
+          {/* IoT Camera Connect Sidebar */}
+          <div className="lg:col-span-1">
+            <IoTCameraConnect />
+            
+            <div className="mt-6 bg-card rounded-lg border border-primary/20 p-4">
+              <h3 className="text-sm font-medium mb-3">How It Works</h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                OMNIEVE allows you to discover and access publicly available camera feeds from around the world. 
+                The system uses AI to identify vulnerable cameras and present them in a searchable interface.
+              </p>
+              <div className="text-xs text-red-400 p-2 bg-red-400/10 rounded border border-red-400/20">
+                Warning: Only access cameras that you are authorized to view. Unauthorized access to private 
+                cameras may violate laws in your jurisdiction.
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Camera Grid */}
-        {cameras.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cameras.map((camera) => (
-              <CameraFeed
-                key={camera.id}
-                id={camera.id}
-                name={camera.name}
-                status={camera.status}
-                securityStatus={camera.securityStatus}
-                location={`${camera.location.city}, ${camera.location.country}`}
-                imageUrl={camera.imageUrl}
-                onSelect={() => handleCameraSelect(camera.id)}
-                onSave={() => handleSaveFeed(camera.id)}
-                isAuthenticated={!!user}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="py-16 text-center">
-            <p className="text-lg font-medium">No active cameras found</p>
-            <p className="text-muted-foreground mt-2">Try adjusting your search or filters</p>
-          </div>
-        )}
       </div>
     </Layout>
   );

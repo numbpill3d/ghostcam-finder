@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
-import { MapPin, Maximize, TerminalSquare } from 'lucide-react';
+import { MapPin, Maximize, TerminalSquare, Radio } from 'lucide-react';
 
 interface MapPoint {
   id: string;
@@ -23,6 +23,7 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [hoveredPoint, setHoveredPoint] = useState<string | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<string | null>(null);
+  const [radarPosition, setRadarPosition] = useState({ x: 50, y: 50 });
   
   // Count active cameras
   const activeCamerasCount = points.filter(p => p.type === 'active').length;
@@ -51,11 +52,31 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
       }
     }, 5000);
 
+    // Radar ping animation - move to random locations
+    const radarInterval = setInterval(() => {
+      if (dimensions.width > 0 && dimensions.height > 0) {
+        // Focus on a random active point
+        const activePoints = points.filter(p => p.type === 'active');
+        if (activePoints.length > 0) {
+          const randomActivePoint = activePoints[Math.floor(Math.random() * activePoints.length)];
+          const coords = getPointCoordinates(randomActivePoint.latitude, randomActivePoint.longitude);
+          setRadarPosition({ x: coords.x, y: coords.y });
+        } else {
+          // Fallback if no active points
+          setRadarPosition({
+            x: Math.random() * dimensions.width,
+            y: Math.random() * dimensions.height
+          });
+        }
+      }
+    }, 8000);
+
     return () => {
       window.removeEventListener('resize', updateDimensions);
       clearInterval(interval);
+      clearInterval(radarInterval);
     };
-  }, [points]);
+  }, [points, dimensions]);
 
   // Convert lat/long to x/y coordinates
   const getPointCoordinates = (latitude: number, longitude: number) => {
@@ -103,6 +124,26 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
 
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card/80"></div>
+
+      {/* Radar Ping Animation */}
+      <div
+        className="absolute"
+        style={{
+          left: `${radarPosition.x}px`,
+          top: `${radarPosition.y}px`,
+          transform: 'translate(-50%, -50%)',
+          zIndex: 5
+        }}
+      >
+        <div className="relative">
+          <div className="absolute -inset-2 flex items-center justify-center">
+            <Radio className="size-6 text-primary animate-pulse" />
+          </div>
+          <div className="absolute -inset-6 rounded-full border border-primary/80 animate-ping-slow opacity-60"></div>
+          <div className="absolute -inset-10 rounded-full border border-primary/60 animate-ping-slow opacity-40" style={{ animationDelay: '0.5s' }}></div>
+          <div className="absolute -inset-14 rounded-full border border-primary/40 animate-ping-slow opacity-20" style={{ animationDelay: '1s' }}></div>
+        </div>
+      </div>
 
       {/* Map Points */}
       {dimensions.width > 0 && points.map((point) => {
@@ -193,7 +234,7 @@ const WorldMap = ({ points = [], className, onPointClick }: WorldMapProps) => {
       {/* Call to Action */}
       <Link
         to="/discover"
-        className="absolute bottom-3 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-primary/90 hover:bg-primary text-white font-mono rounded flex items-center gap-2 border border-primary/30 shadow-glow"
+        className="absolute bottom-3 left-1/2 transform -translate-x-1/2 px-6 py-2 bg-black/90 hover:bg-primary/90 text-primary hover:text-white font-mono rounded flex items-center gap-2 border border-primary/30 shadow-glow transition-colors duration-300"
       >
         <Maximize className="size-4" />
         DISCOVER NOW

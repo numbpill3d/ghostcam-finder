@@ -1,4 +1,3 @@
-
 export interface CameraData {
   id: string;
   name: string;
@@ -29,7 +28,7 @@ export const mockCameras: CameraData[] = [
     securityStatus: 'vulnerable',
     type: 'Traffic',
     lastSeen: '2023-06-15T14:30:00Z',
-    imageUrl: 'https://images.unsplash.com/photo-1554866585-41f789e2c479?q=80&w=400&h=240&auto=format&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1538970272646-f61fabb3a8a2?q=80&w=400&h=240&auto=format&fit=crop'
   },
   {
     id: 'cam002',
@@ -133,6 +132,126 @@ export const mockCameras: CameraData[] = [
     type: 'Beach',
     lastSeen: '2023-06-16T13:10:00Z',
     imageUrl: 'https://images.unsplash.com/photo-1542569414-3e872150c046?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam009',
+    name: 'Rural Crossing',
+    location: {
+      country: 'United States',
+      city: 'Missoula',
+      latitude: 46.8787,
+      longitude: -113.9966
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Traffic',
+    lastSeen: '2023-06-16T11:45:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1529528744093-6f8abeee511d?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam010',
+    name: 'Small Town Square',
+    location: {
+      country: 'Italy',
+      city: 'Siena',
+      latitude: 43.3186,
+      longitude: 11.3307
+    },
+    status: 'online',
+    securityStatus: 'unknown',
+    type: 'Public',
+    lastSeen: '2023-06-16T10:20:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1560969184-10fe8719e047?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam011',
+    name: 'Market Street View',
+    location: {
+      country: 'Morocco',
+      city: 'Marrakech',
+      latitude: 31.6295,
+      longitude: -7.9811
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Street',
+    lastSeen: '2023-06-16T09:35:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1563889958749-625da26ed355?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam012',
+    name: 'Mountain Pass',
+    location: {
+      country: 'Switzerland',
+      city: 'Zermatt',
+      latitude: 46.0207,
+      longitude: 7.7491
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Scenic',
+    lastSeen: '2023-06-16T12:15:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam013',
+    name: 'Coastal Highway',
+    location: {
+      country: 'Ireland',
+      city: 'Galway',
+      latitude: 53.2707,
+      longitude: -9.0568
+    },
+    status: 'online',
+    securityStatus: 'unknown',
+    type: 'Traffic',
+    lastSeen: '2023-06-16T08:50:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam014',
+    name: 'Desert Outpost',
+    location: {
+      country: 'United Arab Emirates',
+      city: 'Dubai',
+      latitude: 25.2048,
+      longitude: 55.2708
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Security',
+    lastSeen: '2023-06-16T14:30:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam015',
+    name: 'IoT Home Security',
+    location: {
+      country: 'Canada',
+      city: 'Toronto',
+      latitude: 43.6532,
+      longitude: -79.3832
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'IoT',
+    lastSeen: '2023-06-16T15:10:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1580982327559-c1202864eb63?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam016',
+    name: 'Factory Perimeter',
+    location: {
+      country: 'South Korea',
+      city: 'Seoul',
+      latitude: 37.5665,
+      longitude: 126.9780
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'IoT',
+    lastSeen: '2023-06-16T13:25:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1626885927365-fc13c9567284?q=80&w=400&h=240&auto=format&fit=crop'
   }
 ];
 
@@ -176,4 +295,35 @@ export const getFilteredByLocation = (locationId: string | null) => {
   return mockCameras.filter(camera => 
     camera.location.country === location.name
   );
+};
+
+export const commonIoTCredentials = [
+  { username: 'admin', password: 'admin' },
+  { username: 'root', password: 'pass' },
+  { username: 'admin', password: '12345' },
+  { username: 'admin', password: '888888' },
+  { username: 'admin', password: '4321' },
+  { username: 'admin', password: '1111111' },
+  { username: 'service', password: 'service' },
+  { username: 'admin', password: '1234' }
+];
+
+export const attemptIoTCameraConnection = (cameraId: string, ipAddress: string) => {
+  console.log(`Attempting to connect to camera ${cameraId} at ${ipAddress}`);
+  
+  const randomSuccess = Math.random() > 0.7;
+  
+  if (randomSuccess) {
+    const credentialIndex = Math.floor(Math.random() * commonIoTCredentials.length);
+    return {
+      success: true,
+      credential: commonIoTCredentials[credentialIndex],
+      message: `Connected successfully using ${commonIoTCredentials[credentialIndex].username}:${commonIoTCredentials[credentialIndex].password}`
+    };
+  } else {
+    return {
+      success: false,
+      message: 'Failed to connect with any of the provided credentials'
+    };
+  }
 };
