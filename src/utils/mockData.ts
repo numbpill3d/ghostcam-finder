@@ -523,10 +523,26 @@ export const mockMapPoints = mockCameras.map(camera => ({
   type: camera.status === 'online' ? 'active' as const : 'inactive' as const
 }));
 
+// Enhanced search function that simulates a more realistic search experience
 export const getSearchResults = (query: string) => {
   if (!query) return mockCameras;
   
   const lowerQuery = query.toLowerCase();
+  
+  // First do an exact match search
+  const exactMatches = mockCameras.filter(camera => 
+    camera.name.toLowerCase() === lowerQuery ||
+    camera.location.country.toLowerCase() === lowerQuery ||
+    camera.location.city.toLowerCase() === lowerQuery ||
+    camera.id.toLowerCase() === lowerQuery ||
+    camera.type.toLowerCase() === lowerQuery
+  );
+  
+  if (exactMatches.length > 0) {
+    return exactMatches;
+  }
+  
+  // Then do a contains search
   return mockCameras.filter(camera => 
     camera.name.toLowerCase().includes(lowerQuery) ||
     camera.location.country.toLowerCase().includes(lowerQuery) ||
@@ -536,7 +552,7 @@ export const getSearchResults = (query: string) => {
   );
 };
 
-// Enhanced location filtering with more precise filters
+// Improved location filtering with more precise matching
 export const getFilteredByLocation = (locationId: string | null) => {
   if (!locationId) return mockCameras;
   
@@ -579,28 +595,65 @@ export const attemptIoTCameraConnection = (cameraId: string, ipAddress: string) 
   }
 };
 
-// New function to search online cameras from external sources
+// Enhanced function to simulate searching external camera databases
 export const searchLiveFeedsFromExternalSources = async (query: string = '') => {
-  console.log(`Searching for live feeds with query: ${query}`);
+  console.log(`Searching external sources for live feeds with query: ${query}`);
   
   // In a real implementation, this would use actual API calls to search engines or camera directories
   // For now, we'll simulate that by returning our enhanced mockCameras filtered by the query
-  const results = query ? 
-    mockCameras.filter(camera => 
-      camera.name.toLowerCase().includes(query.toLowerCase()) ||
-      camera.location.country.toLowerCase().includes(query.toLowerCase()) ||
-      camera.location.city.toLowerCase().includes(query.toLowerCase()) ||
-      camera.type.toLowerCase().includes(query.toLowerCase())
-    ) : 
-    mockCameras;
+  // and adding a delay to simulate network latency
   
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
+  // Simulate different search results based on query to make it feel more dynamic
+  let results = [];
+  
+  if (query) {
+    const lowerQuery = query.toLowerCase();
+    
+    // First check for exact matches
+    const exactMatches = mockCameras.filter(camera => 
+      camera.name.toLowerCase() === lowerQuery ||
+      camera.location.country.toLowerCase() === lowerQuery ||
+      camera.location.city.toLowerCase() === lowerQuery ||
+      camera.id.toLowerCase() === lowerQuery ||
+      camera.type.toLowerCase() === lowerQuery
+    );
+    
+    if (exactMatches.length > 0) {
+      results = exactMatches;
+    } else {
+      // Then do partial matches
+      results = mockCameras.filter(camera => 
+        camera.name.toLowerCase().includes(lowerQuery) ||
+        camera.location.country.toLowerCase().includes(lowerQuery) ||
+        camera.location.city.toLowerCase().includes(lowerQuery) ||
+        camera.id.toLowerCase().includes(lowerQuery) ||
+        camera.type.toLowerCase().includes(lowerQuery)
+      );
+    }
+    
+    // Add some randomness to make each search feel unique
+    // In a real implementation, each search would actually be unique
+    const shuffleResults = Math.random() > 0.5;
+    if (shuffleResults && results.length > 5) {
+      results = [...results].sort(() => Math.random() - 0.5);
+    }
+  } else {
+    // If no query, return a smaller set of results
+    results = mockCameras.slice(0, 12);
+  }
+  
+  // Simulate network delay - longer for more complex queries
+  const delay = query ? 800 + (query.length * 50) : 500;
+  await new Promise(resolve => setTimeout(resolve, delay));
+  
+  // Only return online cameras
+  const onlineResults = results.filter(camera => camera.status === 'online');
   
   return {
     success: true,
-    results: results.filter(camera => camera.status === 'online'), // Only return online cameras
-    totalFound: results.length,
-    message: `Found ${results.length} cameras matching your search`
+    results: onlineResults,
+    totalFound: onlineResults.length,
+    message: `Found ${onlineResults.length} cameras matching your search`,
+    queryComplexity: query ? 'specific' : 'general'
   };
 };

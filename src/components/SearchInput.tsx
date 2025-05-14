@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -7,23 +7,50 @@ interface SearchInputProps {
   onSearch?: (query: string) => void;
   placeholder?: string;
   className?: string;
+  loading?: boolean;
+  initialQuery?: string;
 }
 
-const SearchInput = ({ onSearch, placeholder = "Search by location or ID...", className }: SearchInputProps) => {
-  const [query, setQuery] = useState('');
+const SearchInput = ({ 
+  onSearch, 
+  placeholder = "Search by location or ID...", 
+  className,
+  loading = false,
+  initialQuery = ''
+}: SearchInputProps) => {
+  const [query, setQuery] = useState(initialQuery);
   const [isSearching, setIsSearching] = useState(false);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Effect for handling debounced search
+  useEffect(() => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+    
+    if (query.trim().length > 1) {
+      setIsSearching(true);
+      const timeout = setTimeout(() => {
+        onSearch?.(query);
+        setIsSearching(false);
+      }, 500);
+      
+      setDebounceTimeout(timeout);
+    } else if (query === '') {
+      setIsSearching(false);
+      onSearch?.('');
+    }
+    
+    return () => {
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+    };
+  }, [query, onSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
     
-    setIsSearching(true);
-    
-    // Simulate search delay
-    setTimeout(() => {
-      onSearch?.(query);
-      setIsSearching(false);
-    }, 600);
+    onSearch?.(query);
   };
 
   const clearSearch = () => {
@@ -46,7 +73,7 @@ const SearchInput = ({ onSearch, placeholder = "Search by location or ID...", cl
           placeholder={placeholder}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-          {isSearching ? (
+          {(isSearching || loading) ? (
             <Loader2 className="size-4 animate-spin text-muted-foreground" />
           ) : query ? (
             <button 
