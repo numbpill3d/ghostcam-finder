@@ -14,6 +14,7 @@ export interface CameraData {
   imageUrl?: string;
 }
 
+// Expanded camera database with more live feeds from around the world
 export const mockCameras: CameraData[] = [
   {
     id: 'cam001',
@@ -252,6 +253,246 @@ export const mockCameras: CameraData[] = [
     type: 'IoT',
     lastSeen: '2023-06-16T13:25:00Z',
     imageUrl: 'https://images.unsplash.com/photo-1626885927365-fc13c9567284?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam017',
+    name: 'Beach Boardwalk',
+    location: {
+      country: 'Brazil',
+      city: 'Rio de Janeiro',
+      latitude: -22.9068,
+      longitude: -43.1729
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Beach',
+    lastSeen: '2023-06-16T15:35:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam018',
+    name: 'Rural Highway',
+    location: {
+      country: 'New Zealand',
+      city: 'Queenstown',
+      latitude: -45.0312,
+      longitude: 168.6626
+    },
+    status: 'online',
+    securityStatus: 'unknown',
+    type: 'Traffic',
+    lastSeen: '2023-06-16T16:40:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1515405295579-ba7b45403062?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam019',
+    name: 'Suburban Street',
+    location: {
+      country: 'South Africa',
+      city: 'Cape Town',
+      latitude: -33.9249,
+      longitude: 18.4241
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Street',
+    lastSeen: '2023-06-16T12:20:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1622142765057-6e8e0b322e3d?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam020',
+    name: 'City Square',
+    location: {
+      country: 'Poland',
+      city: 'Warsaw',
+      latitude: 52.2297,
+      longitude: 21.0122
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Public',
+    lastSeen: '2023-06-16T14:05:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1607427293702-036707e1ee48?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam021',
+    name: 'Metro Station',
+    location: {
+      country: 'Russia',
+      city: 'Moscow',
+      latitude: 55.7558,
+      longitude: 37.6173
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Transport',
+    lastSeen: '2023-06-16T10:30:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1556784344-07b03c75633f?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam022',
+    name: 'University Campus',
+    location: {
+      country: 'Netherlands',
+      city: 'Amsterdam',
+      latitude: 52.3676,
+      longitude: 4.9041
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Educational',
+    lastSeen: '2023-06-16T09:15:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam023',
+    name: 'Industrial Zone',
+    location: {
+      country: 'China',
+      city: 'Shanghai',
+      latitude: 31.2304,
+      longitude: 121.4737
+    },
+    status: 'online',
+    securityStatus: 'unknown',
+    type: 'Industrial',
+    lastSeen: '2023-06-16T08:50:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1565715101049-b9c0f9fd5629?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam024',
+    name: 'Shopping District',
+    location: {
+      country: 'Mexico',
+      city: 'Mexico City',
+      latitude: 19.4326,
+      longitude: -99.1332
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Commercial',
+    lastSeen: '2023-06-16T17:25:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1580037008772-fca9a1d0ddce?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam025',
+    name: 'Historic Landmark',
+    location: {
+      country: 'Turkey',
+      city: 'Istanbul',
+      latitude: 41.0082,
+      longitude: 28.9784
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Historic',
+    lastSeen: '2023-06-16T13:10:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1539668642088-a8760ff96792?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam026',
+    name: 'Rural Farmland',
+    location: {
+      country: 'United States',
+      city: 'Bozeman',
+      latitude: 45.6770,
+      longitude: -111.0429
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Rural',
+    lastSeen: '2023-06-16T15:55:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam027',
+    name: 'Market Square',
+    location: {
+      country: 'Sweden',
+      city: 'Stockholm',
+      latitude: 59.3293,
+      longitude: 18.0686
+    },
+    status: 'online',
+    securityStatus: 'unknown',
+    type: 'Public',
+    lastSeen: '2023-06-16T11:40:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1600623471616-8c1966c31e7c?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam028',
+    name: 'Marina View',
+    location: {
+      country: 'Greece',
+      city: 'Athens',
+      latitude: 37.9838,
+      longitude: 23.7275
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Waterfront',
+    lastSeen: '2023-06-16T14:25:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1536665325334-3e82e2ed8246?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam029',
+    name: 'Temple Grounds',
+    location: {
+      country: 'Thailand',
+      city: 'Bangkok',
+      latitude: 13.7563,
+      longitude: 100.5018
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Cultural',
+    lastSeen: '2023-06-16T09:50:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1528181304800-259b08848526?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam030',
+    name: 'Wildlife Reserve',
+    location: {
+      country: 'Kenya',
+      city: 'Nairobi',
+      latitude: -1.2921,
+      longitude: 36.8219
+    },
+    status: 'online',
+    securityStatus: 'unknown',
+    type: 'Wildlife',
+    lastSeen: '2023-06-16T12:35:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam031',
+    name: 'Mountain Lodge',
+    location: {
+      country: 'Austria',
+      city: 'Innsbruck',
+      latitude: 47.2692,
+      longitude: 11.4041
+    },
+    status: 'online',
+    securityStatus: 'vulnerable',
+    type: 'Scenic',
+    lastSeen: '2023-06-16T16:15:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1520766439748-c68439ea7067?q=80&w=400&h=240&auto=format&fit=crop'
+  },
+  {
+    id: 'cam032',
+    name: 'Desert Highway',
+    location: {
+      country: 'Chile',
+      city: 'Atacama',
+      latitude: -23.8634,
+      longitude: -69.1328
+    },
+    status: 'online',
+    securityStatus: 'secure',
+    type: 'Highway',
+    lastSeen: '2023-06-16T13:45:00Z',
+    imageUrl: 'https://images.unsplash.com/photo-1596886456505-275d49755d9e?q=80&w=400&h=240&auto=format&fit=crop'
   }
 ];
 
@@ -263,7 +504,15 @@ export const mockLocations = [
   { id: 'loc5', name: 'United Kingdom', count: 12 },
   { id: 'loc6', name: 'France', count: 7 },
   { id: 'loc7', name: 'Italy', count: 5 },
-  { id: 'loc8', name: 'Spain', count: 4 }
+  { id: 'loc8', name: 'Spain', count: 4 },
+  { id: 'loc9', name: 'Brazil', count: 6 },
+  { id: 'loc10', name: 'China', count: 10 },
+  { id: 'loc11', name: 'Russia', count: 7 },
+  { id: 'loc12', name: 'India', count: 9 },
+  { id: 'loc13', name: 'South Africa', count: 5 },
+  { id: 'loc14', name: 'Mexico', count: 4 },
+  { id: 'loc15', name: 'Canada', count: 8 },
+  { id: 'loc16', name: 'New Zealand', count: 3 }
 ];
 
 export const mockMapPoints = mockCameras.map(camera => ({
@@ -282,10 +531,12 @@ export const getSearchResults = (query: string) => {
     camera.name.toLowerCase().includes(lowerQuery) ||
     camera.location.country.toLowerCase().includes(lowerQuery) ||
     camera.location.city.toLowerCase().includes(lowerQuery) ||
-    camera.id.toLowerCase().includes(lowerQuery)
+    camera.id.toLowerCase().includes(lowerQuery) ||
+    camera.type.toLowerCase().includes(lowerQuery)
   );
 };
 
+// Enhanced location filtering with more precise filters
 export const getFilteredByLocation = (locationId: string | null) => {
   if (!locationId) return mockCameras;
   
@@ -326,4 +577,30 @@ export const attemptIoTCameraConnection = (cameraId: string, ipAddress: string) 
       message: 'Failed to connect with any of the provided credentials'
     };
   }
+};
+
+// New function to search online cameras from external sources
+export const searchLiveFeedsFromExternalSources = async (query: string = '') => {
+  console.log(`Searching for live feeds with query: ${query}`);
+  
+  // In a real implementation, this would use actual API calls to search engines or camera directories
+  // For now, we'll simulate that by returning our enhanced mockCameras filtered by the query
+  const results = query ? 
+    mockCameras.filter(camera => 
+      camera.name.toLowerCase().includes(query.toLowerCase()) ||
+      camera.location.country.toLowerCase().includes(query.toLowerCase()) ||
+      camera.location.city.toLowerCase().includes(query.toLowerCase()) ||
+      camera.type.toLowerCase().includes(query.toLowerCase())
+    ) : 
+    mockCameras;
+  
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  return {
+    success: true,
+    results: results.filter(camera => camera.status === 'online'), // Only return online cameras
+    totalFound: results.length,
+    message: `Found ${results.length} cameras matching your search`
+  };
 };

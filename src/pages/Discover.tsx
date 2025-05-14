@@ -5,9 +5,11 @@ import SearchInput from '@/components/SearchInput';
 import LocationFilter from '@/components/LocationFilter';
 import CameraFeed from '@/components/CameraFeed';
 import IoTCameraConnect from '@/components/IoTCameraConnect';
-import { mockCameras, mockLocations, getSearchResults, getFilteredByLocation } from '@/utils/mockData';
+import { mockCameras, mockLocations, getSearchResults, getFilteredByLocation, searchLiveFeedsFromExternalSources } from '@/utils/mockData';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from "@/components/ui/use-toast";
+import { Loader2, AlertCircle } from 'lucide-react';
 
 interface Location {
   id: string;
@@ -20,6 +22,9 @@ const Discover = () => {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [cameras, setCameras] = useState<any[]>([]);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   
   // Load user's preferred location if logged in
   useEffect(() => {
@@ -31,16 +36,82 @@ const Discover = () => {
     }
   }, [user]);
   
-  // First apply location filter, then search filter
-  const locationFiltered = getFilteredByLocation(selectedLocation?.id || null);
-  const searchFiltered = getSearchResults(searchQuery);
+  // Initial data load
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setIsSearching(true);
+        const response = await searchLiveFeedsFromExternalSources();
+        if (response.success) {
+          setCameras(response.results);
+        }
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+        toast({
+          title: "Error loading cameras",
+          description: "Could not load the camera feeds. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSearching(false);
+        setIsInitialLoad(false);
+      }
+    };
+    
+    fetchInitialData();
+  }, []);
   
-  // Find the intersection of the two filtered arrays
-  // IMPORTANT: Only show ONLINE cameras
-  const cameras = locationFiltered
-    .filter(camera => 
-      searchFiltered.some(c => c.id === camera.id) && camera.status === 'online'
-    );
+  // Handle search and location filter changes
+  useEffect(() => {
+    const fetchFilteredData = async () => {
+      if (isInitialLoad) return;
+      
+      try {
+        setIsSearching(true);
+        
+        // Get base dataset filtered by location
+        const locationFiltered = getFilteredByLocation(selectedLocation?.id || null);
+        
+        // Then search within that dataset
+        const searchFiltered = searchQuery ? 
+          getSearchResults(searchQuery).filter(camera => 
+            locationFiltered.some(c => c.id === camera.id)
+          ) : 
+          locationFiltered;
+        
+        // IMPORTANT: Only show ONLINE cameras
+        setCameras(searchFiltered.filter(camera => camera.status === 'online'));
+        
+        // If very few results, also try external search
+        if (searchFiltered.filter(camera => camera.status === 'online').length < 3 && searchQuery) {
+          const externalResults = await searchLiveFeedsFromExternalSources(searchQuery);
+          if (externalResults.success) {
+            // Merge results without duplicates
+            const mergedResults = [...searchFiltered.filter(camera => camera.status === 'online')];
+            
+            externalResults.results.forEach(camera => {
+              if (!mergedResults.some(c => c.id === camera.id)) {
+                mergedResults.push(camera);
+              }
+            });
+            
+            setCameras(mergedResults);
+          }
+        }
+      } catch (error) {
+        console.error("Error searching cameras:", error);
+        toast({
+          title: "Search Error",
+          description: "Could not complete the search. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSearching(false);
+      }
+    };
+    
+    fetchFilteredData();
+  }, [searchQuery, selectedLocation, isInitialLoad]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -65,7 +136,10 @@ const Discover = () => {
   const saveUserPreference = (key: string, value: string) => {
     // In a real app, this would be an API call to update user preferences
     console.log(`Saving ${key}: ${value} for user ${user?.id}`);
-    // This would typically be implemented with the backend
+    toast({
+      title: "Preference Saved",
+      description: `Your ${key === 'preferredLocation' ? 'location' : 'recent view'} preference has been saved.`,
+    });
   };
 
   const handleSaveFeed = (cameraId: string) => {
@@ -76,7 +150,10 @@ const Discover = () => {
     
     // In a real app, this would be an API call to save the feed
     console.log(`Saving feed ${cameraId} for user ${user.id}`);
-    // This would typically update the UI to show it's saved
+    toast({
+      title: "Feed Saved",
+      description: "This camera feed has been added to your saved feeds.",
+    });
   };
 
   return (
@@ -94,6 +171,7 @@ const Discover = () => {
           <SearchInput 
             onSearch={handleSearch} 
             className="md:flex-[3]" 
+            placeholder="Search by location, camera type, or ID..."
           />
           <LocationFilter 
             locations={mockLocations} 
@@ -107,9 +185,16 @@ const Discover = () => {
           <div className="lg:col-span-3">
             {/* Results Count */}
             <div className="flex justify-between items-center mb-6">
-              <p className="text-sm text-muted-foreground">
-                {cameras.length} {cameras.length === 1 ? 'camera' : 'cameras'} found
-              </p>
+              {isSearching ? (
+                <div className="flex items-center gap-2 text-primary">
+                  <Loader2 className="animate-spin size-4" />
+                  <p className="text-sm">Searching for live feeds...</p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {cameras.length} {cameras.length === 1 ? 'camera' : 'cameras'} found
+                </p>
+              )}
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Sort by:</span>
                 <select className="text-sm border border-input rounded bg-background px-2 py-1">
@@ -121,7 +206,13 @@ const Discover = () => {
             </div>
 
             {/* Camera Grid */}
-            {cameras.length > 0 ? (
+            {isSearching && cameras.length === 0 ? (
+              <div className="py-16 flex flex-col items-center justify-center">
+                <Loader2 className="size-12 animate-spin text-primary mb-4" />
+                <p className="text-lg font-medium text-primary">Searching global camera network...</p>
+                <p className="text-muted-foreground mt-2">This may take a moment</p>
+              </div>
+            ) : cameras.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cameras.map((camera) => (
                   <CameraFeed
@@ -140,8 +231,18 @@ const Discover = () => {
               </div>
             ) : (
               <div className="py-16 text-center">
+                <AlertCircle className="size-12 mx-auto text-muted-foreground mb-4" />
                 <p className="text-lg font-medium">No active cameras found</p>
                 <p className="text-muted-foreground mt-2">Try adjusting your search or filters</p>
+                <button 
+                  className="mt-4 px-4 py-2 bg-primary/20 text-primary rounded-md hover:bg-primary/30 transition-colors"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedLocation(null);
+                  }}
+                >
+                  Clear all filters
+                </button>
               </div>
             )}
           </div>
