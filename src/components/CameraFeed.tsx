@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
-import StatusBadge from './StatusBadge';
-import { Eye, EyeOff, Maximize, MoreVertical, Bookmark, BookmarkCheck } from 'lucide-react';
+import CameraFeedContainer from './camera/CameraFeedContainer';
+import CameraFeedMedia from './camera/CameraFeedMedia';
+import CameraFeedInfo from './camera/CameraFeedInfo';
+import CameraFeedControls from './camera/CameraFeedControls';
 
 interface CameraFeedProps {
   id: string;
@@ -57,86 +58,41 @@ const CameraFeed = ({
   };
 
   return (
-    <div 
-      className={cn(
-        "group relative overflow-hidden rounded-lg border transition-all duration-300",
-        isSelected ? "ring-2 ring-primary" : "hover:border-primary/30",
-        isLoading ? "animate-pulse" : "",
-        className
-      )}
+    <CameraFeedContainer
+      isSelected={isSelected}
+      isLoading={isLoading}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className={className}
     >
       {/* Feed Thumbnail */}
       <div className="aspect-video bg-card relative overflow-hidden">
-        {isLoading ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-secondary/20">
-            <div className="size-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
-          </div>
-        ) : status === 'offline' ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-card">
-            <EyeOff className="size-10 text-muted-foreground/40 mb-2" />
-            <p className="text-sm text-muted-foreground">Feed unavailable</p>
-          </div>
-        ) : (
-          <>
-            <img 
-              src={imageUrl || "https://source.unsplash.com/random/400x240?cctv"} 
-              alt={name}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </>
-        )}
+        <CameraFeedMedia 
+          status={status} 
+          imageUrl={imageUrl} 
+          name={name} 
+          isLoading={isLoading} 
+        />
       </div>
 
       {/* Feed Info */}
-      <div className="p-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-base font-medium line-clamp-1">{name}</h3>
-            {location && (
-              <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{location}</p>
-            )}
-          </div>
-          <StatusBadge status={status} />
-        </div>
-        
-        <div className="flex items-center justify-between mt-3">
-          <StatusBadge status={securityStatus} />
-          <button 
-            className="text-xs px-2.5 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors"
-            onClick={handleSelect}
-          >
-            View Feed
-          </button>
-        </div>
-      </div>
+      <CameraFeedInfo
+        name={name}
+        location={location}
+        status={status}
+        securityStatus={securityStatus}
+        onSelect={handleSelect}
+      />
 
       {/* Hover Controls */}
-      {isHovered && status === 'online' && (
-        <div className="absolute top-2 right-2 flex items-center space-x-1 animate-fade-in">
-          {isAuthenticated && (
-            <button 
-              className={cn(
-                "size-8 flex items-center justify-center rounded-full text-white transition-colors",
-                saved ? "bg-primary/80 hover:bg-primary/90" : "bg-black/60 hover:bg-black/80"
-              )}
-              onClick={handleSave}
-              title={saved ? "Unsave feed" : "Save feed"}
-            >
-              {saved ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
-            </button>
-          )}
-          <button className="size-8 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
-            <Maximize className="size-4" />
-          </button>
-          <button className="size-8 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
-            <MoreVertical className="size-4" />
-          </button>
-        </div>
-      )}
-    </div>
+      <CameraFeedControls
+        isHovered={isHovered}
+        status={status}
+        isAuthenticated={isAuthenticated}
+        saved={saved}
+        handleSave={handleSave}
+      />
+    </CameraFeedContainer>
   );
 };
 
