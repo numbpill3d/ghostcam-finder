@@ -1,69 +1,110 @@
-# Welcome to your Lovable project
+# omnieye (ghostcam-finder)
 
-## Project info
+**omnieye** is a lightweight web application designed to search for publicly accessible webcams and open IP camera streams across the globe. It passively indexes unsecured or default-password live feeds from a variety of known camera models and open endpoints, making it possible to view anonymous, real-time glimpses into environments around the world.
 
-**URL**: https://lovable.dev/projects/681fc17e-a9fd-4d62-a073-6ad70615b70e
+this tool is intended for educational, research, and observational purposes only.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## features
 
-**Use Lovable**
+- search interface for filtering cameras by location, keyword, or device type  
+- passive querying of known public and open endpoints  
+- real-time streaming of camera feeds (MJPEG, RTSP to browser preview, where supported)  
+- minimal, dark-styled UI designed for long-form observation  
+- camera metadata (IP, location hint, model) when available  
+- does **not** brute-force, break, or exploit — omnieye only lists streams that are *already* publicly viewable or indexed
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/681fc17e-a9fd-4d62-a073-6ad70615b70e) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## why omnieye?
 
-**Use your preferred IDE**
+the internet is filled with forgotten feeds — weather stations in antarctica, traffic cams in shanghai, baby monitors in kansas, abandoned retail surveillance in nowhere towns. omnieye lets you explore these signals in a calm, structured, and voyeuristically honest way. think of it as a passive lens into the strange, liminal corners of a hyperconnected world.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## intended audience
 
-Follow these steps:
+- osint researchers  
+- artists, documentarians, and explorers  
+- urban studies and digital geography nerds  
+- privacy advocates and infosec learners  
+- ghosts, watchers, network kids  
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+you can run omnieye locally or deploy it as a private web tool.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### clone the repo
+
+```bash
+git clone https://github.com/yourusername/omnieye.git
+cd omnieye
+````
+
+### install dependencies
+
+```bash
+npm install
+```
+
+### start the development server
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## deployment
 
-**Use GitHub Codespaces**
+to build for production:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run build
+```
 
-## What technologies are used for this project?
+then deploy the contents of the `dist` or `build` folder to your hosting provider or private server.
 
-This project is built with .
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## architecture
 
-## How can I deploy this project?
+* frontend: vanilla js or your choice of lightweight framework
+* backend: optional API integration with passive camera indexing sources (e.g. insecam, shodan API, or your own crawler)
+* no user tracking, no analytics, no database by default
+* extensible with minimal code
 
-Simply open [Lovable](https://lovable.dev/projects/681fc17e-a9fd-4d62-a073-6ad70615b70e) and click on Share -> Publish.
+---
 
-## I want to use a custom domain - is that possible?
+## legal notice
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+**omnieye** does not hack, exploit, or crack any devices. it merely surfaces and organizes data already made public through misconfiguration, indexing, or user-intended sharing. usage of this tool is at your own discretion. do not use it to surveil, harass, or exploit anyone. respect privacy and legality at all times. this project is provided for educational and research purposes only.
+
+---
+
+## license
+
+MIT license
+
+---
+
+## credits
+
+created by voidrane Splicer, also known as numbpilled who is a homeless programmer with schizoaffective disorder who currently steal camps/scavenges in the apathetic streets of charlotte, nc. consider donating to her via apple pay at (+1 828 266 8648) or through purchasing her templates/themes at https://ko-fi.com/numbpilled
+
+built in the spirit of liminal cartography and digital transparency
+
+
+---
+
+## support this project
+
+feel free to fork, share, or build upon this tool.
+for updates or related projects, visit: \[your personal site, neocities, or blog]
+
+```
+
+
