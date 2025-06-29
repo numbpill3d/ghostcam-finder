@@ -20,7 +20,9 @@ const Discover = () => {
     isInitialLoad,
     handleSearch,
     handleLocationSelect,
-    performSearch
+    performSearch,
+    refetch,
+    scrapeCameras
   } = useDiscoverSearch();
   
   // Load user's preferred location if logged in
@@ -34,7 +36,6 @@ const Discover = () => {
   }, [user, handleLocationSelect]);
 
   const handleLoadMore = () => {
-    // In a real app, this would load the next page of results
     toast({
       title: "Loading more results",
       description: "Searching for additional camera feeds...",
@@ -49,7 +50,6 @@ const Discover = () => {
   };
 
   const saveUserPreference = (key: string, value: string) => {
-    // In a real app, this would be an API call to update user preferences
     console.log(`Saving ${key}: ${value} for user ${user?.id}`);
     toast({
       title: "Preference Saved",
@@ -86,6 +86,8 @@ const Discover = () => {
               isSearching={isSearching} 
               searchQuery={searchQuery}
               onLoadMore={handleLoadMore}
+              onRefresh={refetch}
+              onScrapeNew={scrapeCameras}
             />
           </div>
           

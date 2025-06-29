@@ -1,12 +1,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { toast } from "@/components/ui/use-toast";
-import { 
-  mockCameras, 
-  mockLocations, 
-  getSearchResults, 
-  searchLiveFeedsFromExternalSources 
-} from '@/utils/mockData';
+import { useRealCameraData } from './useRealCameraData';
 
 export interface Location {
   id: string;
@@ -21,98 +16,92 @@ interface UseDiscoverSearchProps {
 export const useDiscoverSearch = ({ initialLocation }: UseDiscoverSearchProps = {}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(initialLocation || null);
-  const [isSearching, setIsSearching] = useState(false);
-  const [cameras, setCameras] = useState<any[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [totalResults, setTotalResults] = useState(0);
 
-  // Search function that can be called from multiple places
-  const performSearch = useCallback(async (query: string, locationId: string | null) => {
-    setIsSearching(true);
-    
-    try {
-      // Simulate searching both local and external sources
-      let results: any[] = [];
-      
-      // First try local results
-      const localResults = query 
-        ? getSearchResults(query)
-        : mockCameras;
-      
-      // Filter by location if needed
-      const locationFiltered = locationId
-        ? localResults.filter(camera => {
-            const location = mockLocations.find(loc => loc.id === locationId);
-            return location && camera.location.country === location.name;
-          })
-        : localResults;
-      
-      // Only include online cameras
-      results = locationFiltered.filter(camera => camera.status === 'online');
-      
-      // If we have few results or a specific search term, search external sources
-      if (results.length < 8 || query) {
-        console.log("Searching external sources for:", query);
-        const externalResponse = await searchLiveFeedsFromExternalSources(query);
-        
-        if (externalResponse.success) {
-          // Filter by location if needed
-          const externalLocationFiltered = locationId
-            ? externalResponse.results.filter(camera => {
-                const location = mockLocations.find(loc => loc.id === locationId);
-                return location && camera.location.country === location.name;
-              })
-            : externalResponse.results;
-          
-          // Merge results without duplicates
-          externalLocationFiltered.forEach(camera => {
-            if (!results.some(c => c.id === camera.id)) {
-              results.push(camera);
-            }
-          });
-        }
-      }
-      
-      // Set total results for display
-      setTotalResults(results.length);
-      setCameras(results);
-      
-      if (results.length === 0 && query) {
-        toast({
-          title: "No cameras found",
-          description: "Try a different search term or location filter.",
-          variant: "default",
-        });
-      }
-    } catch (error) {
-      console.error("Search error:", error);
-      toast({
-        title: "Search Error",
-        description: "Could not complete the search. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSearching(false);
-      setIsInitialLoad(false);
-    }
-  }, []);
-  
+  // Use real camera data hook
+  const {
+    cameras,
+    isLoading: isSearching,
+    error,
+    refetch,
+    scrapeCameras
+  } = useRealCameraData({
+    search: searchQuery || undefined,
+    country: selectedLocation?.name || undefined,
+    limit: 100
+  });
+
+  const totalResults = cameras.length;
+
   // Handle search input changes
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
-    performSearch(query, selectedLocation?.id || null);
-  }, [selectedLocation, performSearch]);
+  }, []);
 
   // Handle location selection
   const handleLocationSelect = useCallback((location: Location | null) => {
     setSelectedLocation(location);
-    performSearch(searchQuery, location?.id || null);
-  }, [searchQuery, performSearch]);
+  }, []);
+
+  // Manual search trigger
+  const performSearch = useCallback(async (query: string, locationId: string | null) => {
+    setSearchQuery(query);
+    if (locationId) {
+      // Find location by ID (assuming locations are countries for now)
+      const locationMap: { [key: string]: string } = {
+        'us': 'United States',
+        'uk': 'United Kingdom',
+        'de': 'Germany',
+        'fr': 'France',
+        'it': 'Italy',
+        'es': 'Spain',
+        'ca': 'Canada',
+        'au': 'Australia',
+        'jp': 'Japan',
+        'cn': 'China'
+      };
+      
+      const locationName = locationMap[locationId];
+      if (locationName) {
+        setSelectedLocation({ id: locationId, name: locationName, count: 0 });
+      }
+    } else {
+      setSelectedLocation(null);
+    }
+
+    // Trigger refresh
+    refetch();
+  }, [refetch]);
 
   // Initial data load
   useEffect(() => {
-    performSearch('', selectedLocation?.id || null);
-  }, [performSearch, selectedLocation]);
+    if (cameras.length === 0 && !isSearching && !error) {
+      // Try to scrape cameras if none exist
+      scrapeCameras().catch(console.error);
+    }
+    setIsInitialLoad(false);
+  }, [cameras.length, isSearching, error, scrapeCameras]);
+
+  // Show error toast
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error Loading Cameras",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error]);
+
+  // Show success message when cameras are found
+  useEffect(() => {
+    if (!isSearching && cameras.length > 0 && searchQuery) {
+      toast({
+        title: "Cameras Found",
+        description: `Found ${cameras.length} live camera feeds matching your search.`,
+      });
+    }
+  }, [isSearching, cameras.length, searchQuery]);
 
   return {
     searchQuery,
@@ -124,5 +113,7 @@ export const useDiscoverSearch = ({ initialLocation }: UseDiscoverSearchProps = 
     handleSearch,
     handleLocationSelect,
     performSearch,
+    refetch,
+    scrapeCameras
   };
 };

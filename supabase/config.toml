@@ -1,1 +1,8 @@
+
 project_id = "gkfamyxpktfodfjrpckj"
+
+[functions.scrape-cameras]
+verify_jwt = false
+
+[functions.get-cameras]
+verify_jwt = false

@@ -9,7 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      camera_feeds: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          last_verified_at: string | null
+          latitude: number | null
+          location_city: string | null
+          location_country: string | null
+          longitude: number | null
+          screenshot_url: string | null
+          security_status: string | null
+          source_website: string | null
+          status: string | null
+          stream_url: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          vibe_score: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          last_verified_at?: string | null
+          latitude?: number | null
+          location_city?: string | null
+          location_country?: string | null
+          longitude?: number | null
+          screenshot_url?: string | null
+          security_status?: string | null
+          source_website?: string | null
+          status?: string | null
+          stream_url: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          vibe_score?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          last_verified_at?: string | null
+          latitude?: number | null
+          location_city?: string | null
+          location_country?: string | null
+          longitude?: number | null
+          screenshot_url?: string | null
+          security_status?: string | null
+          source_website?: string | null
+          status?: string | null
+          stream_url?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          vibe_score?: number | null
+        }
+        Relationships: []
+      }
+      feed_sources: {
+        Row: {
+          active: boolean | null
+          base_url: string
+          created_at: string
+          feeds_found: number | null
+          id: string
+          last_scraped_at: string | null
+          name: string
+          scraper_type: string
+        }
+        Insert: {
+          active?: boolean | null
+          base_url: string
+          created_at?: string
+          feeds_found?: number | null
+          id?: string
+          last_scraped_at?: string | null
+          name: string
+          scraper_type: string
+        }
+        Update: {
+          active?: boolean | null
+          base_url?: string
+          created_at?: string
+          feeds_found?: number | null
+          id?: string
+          last_scraped_at?: string | null
+          name?: string
+          scraper_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
