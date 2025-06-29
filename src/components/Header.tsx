@@ -4,12 +4,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Menu, X, Search, Eye, UserCircle, LogOut } from 'lucide-react';
 import ASCIIHeader from './ASCIIHeader';
-import { useAuth } from '@/hooks/useAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, signOut } = useSupabaseAuth();
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -70,7 +70,7 @@ const Header = () => {
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="text-sm font-mono px-3 py-1 rounded-full bg-primary/10 text-primary">
-                  <span className="hidden sm:inline">USER:</span> {user.name}
+                  <span className="hidden sm:inline">USER:</span> {user.email?.split('@')[0]}
                 </div>
                 <button 
                   onClick={signOut}
@@ -152,7 +152,7 @@ const Header = () => {
                   <>
                     <div className="flex items-center py-2 gap-2">
                       <UserCircle className="size-5 text-primary" />
-                      <span className="text-sm font-medium">{user.name}</span>
+                      <span className="text-sm font-medium">{user.email}</span>
                     </div>
                     <button 
                       onClick={() => {

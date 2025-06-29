@@ -50,9 +50,15 @@ export const useRealCameraData = ({
       if (search) params.append('search', search);
       params.append('limit', limit.toString());
 
+      // Use POST method to send parameters in body
       const { data, error } = await supabase.functions.invoke('get-cameras', {
-        method: 'GET',
-        body: params.toString()
+        method: 'POST',
+        body: {
+          category,
+          country,
+          search,
+          limit
+        }
       });
 
       if (error) {

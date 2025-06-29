@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { mockLocations } from '@/utils/mockData';
-import { useAuth } from '@/hooks/useAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { toast } from "@/components/ui/use-toast";
 import { useDiscoverSearch } from '@/hooks/useDiscoverSearch';
 import SearchResults from '@/components/discover/SearchResults';
@@ -10,7 +10,7 @@ import DiscoverHeader from '@/components/discover/DiscoverHeader';
 import DiscoverSidebar from '@/components/discover/DiscoverSidebar';
 
 const Discover = () => {
-  const { user } = useAuth();
+  const { user } = useSupabaseAuth();
   
   const { 
     searchQuery,
@@ -27,8 +27,8 @@ const Discover = () => {
   
   // Load user's preferred location if logged in
   useEffect(() => {
-    if (user?.preferredLocation) {
-      const userLocation = mockLocations.find(loc => loc.id === user.preferredLocation);
+    if (user?.user_metadata?.preferredLocation) {
+      const userLocation = mockLocations.find(loc => loc.id === user.user_metadata.preferredLocation);
       if (userLocation) {
         handleLocationSelect(userLocation);
       }

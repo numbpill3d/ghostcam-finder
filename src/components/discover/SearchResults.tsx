@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from "@/components/ui/use-toast";
 import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import CameraFeed from '@/components/CameraFeed';
-import { useAuth } from '@/hooks/useAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { RealCameraFeed } from '@/hooks/useRealCameraData';
 
 interface SearchResultsProps {
@@ -25,7 +25,7 @@ const SearchResults = ({
   onScrapeNew 
 }: SearchResultsProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useSupabaseAuth();
 
   const handleCameraSelect = (cameraId: string) => {
     navigate(`/view?id=${cameraId}`);

@@ -14,11 +14,16 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const category = url.searchParams.get('category');
-    const country = url.searchParams.get('country');
-    const search = url.searchParams.get('search');
-    const limit = parseInt(url.searchParams.get('limit') || '50');
+    // Parse request body for parameters
+    let category, country, search, limit = 50;
+    
+    if (req.method === 'POST') {
+      const body = await req.json();
+      category = body.category;
+      country = body.country;
+      search = body.search;
+      limit = body.limit || 50;
+    }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;

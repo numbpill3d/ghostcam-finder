@@ -2,29 +2,27 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { useAuth } from '@/hooks/useAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { Input } from '@/components/ui/input';
 import { UserPlus, Loader2 } from 'lucide-react';
 
 const SignUp = () => {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp } = useSupabaseAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    const success = await signUp(name, email, password);
+    const success = await signUp(email, password);
     
     if (success) {
       navigate('/discover');
-    } else {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -34,21 +32,6 @@ const SignUp = () => {
           <h1 className="text-2xl font-bold mb-6 text-center terminal-text">CREATE.USER</h1>
           
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="name" className="block text-sm font-mono text-primary">
-                USER.ALIAS
-              </label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="font-mono bg-black/50 border-primary/30 focus:border-primary"
-              />
-            </div>
-            
             <div className="space-y-2">
               <label htmlFor="email" className="block text-sm font-mono text-primary">
                 EMAIL.IDENTIFIER

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { useAuth } from '@/hooks/useAuth';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { Input } from '@/components/ui/input';
 import { LogIn, Loader2 } from 'lucide-react';
 
@@ -10,7 +10,7 @@ const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn } = useSupabaseAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,9 +21,8 @@ const SignIn = () => {
     
     if (success) {
       navigate('/discover');
-    } else {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   return (
