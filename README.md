@@ -103,7 +103,10 @@ built in the spirit of liminal cartography and digital transparency
 ## support this project
 
 feel free to fork, share, or build upon this tool.
-for updates or related projects, visit: \[your personal site, neocities, or blog]
+
+for updates or related projects, visit: https://voidrane.nekoweb.org | nolove.neocities.org | necrogirl.gumroad.com | numbpilled.gumroad.com 
+
+feel free to donate XMR <3 41hLeFRZn9iTcwX1aKxRZGRsAS8KVdRvEGdgRyEEr9W4GHPEP2anrAFAh9v6d35RY2i1uM5kGzq7CTnrqj26yynyRCLMATF
 
 ```
 
